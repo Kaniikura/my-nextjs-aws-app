@@ -9,9 +9,8 @@ export default defineConfig([
         },
         extends: ["js/recommended"],
         rules: {
-            "no-unused-vars": "warn",
             "no-undef": "warn",
-            "@typescript-eslint/no-unused-vars": [
+            "no-unused-vars": [
                 "warn",
                 {
                     argsIgnorePattern: "^_",
