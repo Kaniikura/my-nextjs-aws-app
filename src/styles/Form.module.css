@@ -1,0 +1,63 @@
+/* src/styles/Form.module.css */
+.formContainer {
+  max-width: 400px; /* Limit form width */
+  margin: 2rem auto; /* Center form on the page */
+  padding: 2rem;
+  background-color: rgb(var(--card-background-rgb)); /* White background */
+  border: 1px solid rgb(var(--card-border-rgb)); /* Subtle border */
+  border-radius: var(--border-radius); /* Use root variable */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Slightly more pronounced shadow */
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  color: #333;
+}
+
+.inputGroup {
+  margin-bottom: 1.25rem; /* Space between input groups */
+}
+
+.label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.submitButton {
+  /* Inherits global button styles */
+  width: 100%; /* Make button full width */
+  margin-top: 1rem; /* Space above the button */
+}
+
+.errorMessage {
+  color: var(--danger-color); /* Use root variable for danger color */
+  background-color: rgba(220, 53, 69, 0.1); /* Light red background */
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  padding: 0.75rem;
+  border-radius: 6px;
+  margin-top: 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.linkText {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.linkText a {
+    font-weight: 500;
+}
+
+.infoText {
+    font-size: 0.9rem;
+    color: #555;
+    margin-bottom: 1rem;
+    text-align: center;
+}
