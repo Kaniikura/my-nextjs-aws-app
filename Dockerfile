@@ -56,4 +56,4 @@ EXPOSE $PORT
 # Command to run the application (using the standalone output)
 CMD ["node", "server.js"]
 
-HEALTHCHECK --start-period=10s --interval=10s --timeout=3s CMD curl -f http://localhost:${PORT}/api/health || exit 1
+HEALTHCHECK --start-period=10s --interval=10s --timeout=3s CMD curl -f http://localhost:${PORT}/health || exit 1
