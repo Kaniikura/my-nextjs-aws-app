@@ -1,24 +1,66 @@
-// src/components/ConfigureAmplify.tsx
 'use client'; // Mark this component as a Client Component
 
-import { useEffect } from 'react';
-import { configureAmplifyClientSide } from '@/lib/amplify-client'; // Adjust path if necessary
-
-// Call the configuration function
-configureAmplifyClientSide();
+import { Amplify } from 'aws-amplify';
+import { useEffect, useState } from 'react';
 
 /**
- * A client component responsible solely for ensuring Amplify is configured on the client-side.
- * It doesn't render any UI itself.
+ * Fetches runtime configuration from the API and configures Amplify.
+ * This component should be rendered early in the application lifecycle, e.g., in the root layout.
  */
-export default function ConfigureAmplifyClientSide() {
-  // This component doesn't need to render anything,
-  // its purpose is to run the configuration logic in a client context.
-  // Using useEffect ensures it runs after initial mount, though configureAmplifyClientSide()
-  // is called at the top level here, which is also valid for client components.
-  useEffect(() => {
-     console.log("ConfigureAmplifyClientSide mounted, Amplify should be configured.");
-  }, []);
+export default function ConfigureAmplify() {
+  const [isConfigured, setIsConfigured] = useState(false);
 
-  return null; // Render nothing
+  useEffect(() => {
+    const fetchConfigAndConfigure = async () => {
+      if (isConfigured) return; // Prevent reconfiguration
+
+      try {
+        console.log('Fetching runtime configuration for Amplify...');
+        // Fetch configuration from the API route
+        const response = await fetch('/api/config');
+        if (!response.ok) {
+          throw new Error(`Failed to fetch config: ${response.status} ${response.statusText}`);
+        }
+        const config = await response.json();
+
+        // Check if the server returned an error object
+        if (config.error) {
+          throw new Error(`Failed to fetch config: ${config.error}`);
+        }
+
+        console.log('Runtime configuration received:', config);
+
+        // Configure Amplify using the fetched runtime configuration
+        Amplify.configure({
+          Auth: {
+            Cognito: {
+              userPoolId: config.cognitoUserPoolId,
+              userPoolClientId: config.cognitoClientId,
+            }
+          },
+          API: {
+            REST: {
+              'MyApiName': {
+                endpoint: config.apiGatewayUrl,
+              }
+            }
+          },
+        }, {
+        });
+
+        console.log('Amplify configured successfully.');
+        setIsConfigured(true); // Mark Amplify as configured
+      } catch (error) {
+        console.error('Error configuring Amplify:', error);
+      }
+    };
+
+    // Run the configuration function
+    fetchConfigAndConfigure();
+
+  }, [isConfigured]); // Dependency array includes isConfigured to prevent re-runs
+
+  // This component doesn't render anything itself, it just configures Amplify.
+  // You could optionally render a loading indicator or children based on `isConfigured`.
+  return null;
 }
