@@ -33,11 +33,13 @@ RUN npm run build # Or yarn build
 FROM base AS runner
 WORKDIR /app
 
+# Install curl for healthcheck
+RUN apk add --no-cache curl
+
 # Set NODE_ENV to production
 ENV NODE_ENV=production
-# Optionally set hostname and port if needed, App Runner usually injects PORT
-# ENV HOSTNAME=0.0.0.0
-# ENV PORT=3000
+ENV HOSTNAME=0.0.0.0
+ENV PORT=3000
 
 # Copy necessary files from the builder stage
 COPY --from=builder /app/public ./public
@@ -49,7 +51,9 @@ COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 USER node
 
 # Expose the port the app runs on (App Runner injects PORT env var)
-EXPOSE 3000
+EXPOSE $PORT
 
 # Command to run the application (using the standalone output)
 CMD ["node", "server.js"]
+
+HEALTHCHECK --start-period=10s --interval=10s --timeout=3s CMD curl -f http://localhost:${PORT}/api/health || exit 1
