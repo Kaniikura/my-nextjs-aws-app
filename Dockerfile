@@ -36,22 +36,20 @@ WORKDIR /app
 # Install curl for healthcheck
 RUN apk add --no-cache curl
 
-# Set NODE_ENV to production
 ENV NODE_ENV=production
-ENV HOSTNAME=0.0.0.0
-ENV PORT=3000
 
 # Copy necessary files from the builder stage
 COPY --from=builder /app/public ./public
+COPY --from=builder --chown=node:node /app/.next/static ./.next/static
+
 # Copy standalone output (recommended for smaller image size)
 COPY --from=builder --chown=node:node /app/.next/standalone ./
-COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 
 # Set the user to non-root
 USER node
 
 # Expose the port the app runs on (App Runner injects PORT env var)
-EXPOSE $PORT
+EXPOSE 3000
 
 # Command to run the application (using the standalone output)
 CMD ["node", "server.js"]
